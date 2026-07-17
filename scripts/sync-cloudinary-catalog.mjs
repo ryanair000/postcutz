@@ -101,13 +101,22 @@ async function main() {
     console.log(`Synced poster: ${poster.slug}`);
   }
 
-  const allowed = POSTERS.map((poster) => poster.slug);
-  const { error: archiveError } = await supabase
+  const allowed = new Set(POSTERS.map((poster) => poster.slug));
+  const { data: existing, error: existingError } = await supabase
     .from("poster_portal_posters")
-    .update({ status: "archived" })
-    .eq("status", "published")
-    .not("slug", "in", `(${allowed.join(",")})`);
-  if (archiveError) throw archiveError;
+    .select("id, slug")
+    .eq("status", "published");
+  if (existingError) throw existingError;
+
+  for (const item of existing || []) {
+    if (!allowed.has(item.slug)) {
+      const { error } = await supabase
+        .from("poster_portal_posters")
+        .update({ status: "archived" })
+        .eq("id", item.id);
+      if (error) throw error;
+    }
+  }
 
   console.log(`PostCutz catalog sync complete: ${results.length} posters.`);
 }

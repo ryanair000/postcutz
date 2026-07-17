@@ -1,0 +1,55 @@
+@media (max-width: 1050px) {
+  .site-nav { display: none; }
+  .poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .package-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-shell { grid-template-columns: 210px 1fr; }
+  .admin-main { padding: 28px; }
+}
+@media (max-width: 760px) {
+  .login-page { grid-template-columns: 1fr; }
+  .login-brand-panel { min-height: 420px; padding: 28px; }
+  .login-copy h1 { font-size: 48px; }
+  .login-copy ul { display: none; }
+  .login-form-panel { padding: 18px; }
+  .auth-card { padding: 25px; }
+  .site-header-inner { width: calc(100% - 24px); min-height: 66px; }
+  .site-header .brand small, .site-header .brand > span:last-child { display: none; }
+  .credit-badge { padding: 9px 10px; }
+  .content-page { width: calc(100% - 24px); padding-top: 28px; }
+  .page-hero { grid-template-columns: 1fr; }
+  .page-hero > div:first-child { padding: 27px; }
+  .hero-credit-card { grid-template-columns: 1fr auto; align-items: center; }
+  .hero-credit-card strong { font-size: 50px; }
+  .hero-credit-card span { grid-column: 1; }
+  .hero-credit-card a { grid-column: 2; grid-row: 1 / 3; margin: 0; }
+  .library-toolbar { align-items: stretch; flex-direction: column; }
+  .category-tabs { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 5px; }
+  .poster-grid { grid-template-columns: 1fr; }
+  .preview-modal { grid-template-columns: 1fr; }
+  .preview-stage { min-height: auto; aspect-ratio: 1; }
+  .preview-details { padding: 25px; }
+  .download-row { grid-template-columns: 74px 1fr; }
+  .download-row img { width: 74px; height: 74px; }
+  .download-row form { grid-column: 1 / -1; }
+  .download-row .button { width: 100%; }
+  .credits-hero { align-items: flex-start; }
+  .balance-orb { width: 125px; height: 125px; flex: 0 0 auto; }
+  .balance-orb strong { font-size: 42px; }
+  .package-grid { grid-template-columns: 1fr; }
+  .package-card.recommended { transform: none; }
+  .status-actions { flex-direction: column; width: 100%; }
+  .admin-shell { grid-template-columns: 1fr; }
+  .admin-sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; padding: 13px; }
+  .admin-sidebar .brand, .admin-label { display: none; }
+  .admin-sidebar nav { display: flex; }
+  .admin-sidebar nav a { white-space: nowrap; }
+  .admin-main { padding: 20px 12px 50px; }
+  .admin-header { align-items: flex-start; flex-direction: column; }
+  .admin-header h1 { font-size: 39px; }
+  .metric-grid, .checklist-grid, .form-grid, .upload-grid, .poster-admin-grid { grid-template-columns: 1fr; }
+  .form-grid .wide { grid-column: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms!important; transition-duration: .01ms!important; }
+}

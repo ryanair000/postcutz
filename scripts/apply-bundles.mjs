@@ -12,4 +12,5 @@ async function extract(file) {
 
 await extract("bundles/code-overlay.tar.gz");
 await extract("bundles/latest-delta.tar.gz");
+await extract("bundles/live-fixes.tar.gz");
 console.log("PostCutz production overlays applied.");

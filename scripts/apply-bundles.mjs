@@ -17,9 +17,17 @@ async function copyOverrides() {
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
   }
+
   try {
     await access("overrides/styles");
     await cp("overrides/styles", "styles", { recursive: true, force: true });
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+
+  try {
+    await access("overrides/middleware.ts");
+    await cp("overrides/middleware.ts", "middleware.ts", { force: true });
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
   }

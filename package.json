@@ -1,6 +1,6 @@
 {
   "name": "postcutz",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "apply-bundles": "node scripts/apply-bundles.mjs",
@@ -8,7 +8,6 @@
     "dev": "next dev",
     "prebuild": "npm run apply-bundles",
     "build": "next build",
-    "postbuild": "node scripts/sync-cloudinary-catalog.mjs",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },

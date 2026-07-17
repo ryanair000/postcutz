@@ -14,10 +14,15 @@ async function patchDownloadRoute() {
   const path = "app/api/posters/[id]/download/route.ts";
   try {
     const source = await readFile(path, "utf8");
-    const patched = source.replace(
-      'result.bytes.toString("base64")',
-      'result.bytes!.toString("base64")'
-    );
+    const patched = source
+      .replace(
+        'result.bytes.toString("base64")',
+        'result.bytes!.toString("base64")'
+      )
+      .replace(
+        '"Content-Type": result.contentType,',
+        '"Content-Type": result.contentType || "application/octet-stream",'
+      );
     if (patched !== source) await writeFile(path, patched);
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;

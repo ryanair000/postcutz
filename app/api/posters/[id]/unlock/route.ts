@@ -6,11 +6,12 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
-  const { data, error } = await supabase.rpc("postcutz_unlock", { p_poster_id: id });
+
+  const { data, error } = await supabase.rpc("poster_portal_unlock", { p_poster_id: id });
   if (error) {
-    const status = error.message.includes("Insufficient") ? 402 : 400;
-    return NextResponse.json({ error: error.message }, { status });
+    const message = error.message.includes("insufficient") ? "You need more credits to unlock this poster." : error.message;
+    return NextResponse.json({ error: message }, { status: error.message.includes("insufficient") ? 402 : 400 });
   }
   const result = Array.isArray(data) ? data[0] : data;
-  return NextResponse.json(result);
+  return NextResponse.json(result || { already_unlocked: false, balance: 0 });
 }

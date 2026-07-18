@@ -8,6 +8,7 @@ export type Poster = {
   category: string;
   preview_path: string;
   original_path: string | null;
+  source_type: "builtin" | "storage";
   file_name: string | null;
   mime_type: string | null;
   width: number | null;
@@ -30,9 +31,9 @@ export type CreditPackage = {
 };
 
 export type Profile = {
-  id: string;
+  user_id: string;
   email: string | null;
-  full_name: string | null;
+  display_name: string | null;
   role: "client" | "admin";
   welcome_credits_granted_at: string | null;
   created_at: string;
@@ -42,12 +43,11 @@ export type Payment = {
   id: string;
   user_id: string;
   reference: string;
-  package_id: string | null;
   credits: number;
-  expected_amount_minor: number;
-  paid_amount_minor: number | null;
+  amount_minor: number;
   status: "pending" | "paid" | "failed" | "abandoned";
-  provider_transaction_id: string | null;
+  paystack_transaction_id: string | null;
   created_at: string;
   paid_at: string | null;
+  fulfilled_at: string | null;
 };

@@ -1,0 +1,119 @@
+.brand-mark-logo { overflow: hidden; background: #fff; border: 1px solid rgba(16,17,15,.12); }
+.brand-mark-logo img { width: 100%; height: 100%; object-fit: cover; }
+.mobile-nav { display: none; }
+.login-submit { min-height: 52px; }
+
+@media (max-width: 760px) {
+  :root { --mobile-nav-height: 74px; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { overflow-x: hidden; }
+  button, a, input, select, textarea { touch-action: manipulation; }
+  input, select, textarea { font-size: 16px!important; }
+
+  .password-only-login { display: flex; min-height: 100svh; flex-direction: column; }
+  .password-only-login .login-form-panel { order: 1; min-height: 100svh; padding: max(16px, env(safe-area-inset-top)) 16px 22px; align-items: center; }
+  .password-only-login .login-brand-panel { order: 2; min-height: auto; padding: 30px 22px calc(30px + env(safe-area-inset-bottom)); gap: 34px; }
+  .password-only-login .auth-card { width: 100%; max-width: 440px; padding: 28px 22px; border-radius: 24px; }
+  .password-only-login .auth-card h2 { font-size: 31px; line-height: 1.05; }
+  .password-only-login .auth-card > p { font-size: 14px; }
+  .password-only-login .login-copy h1 { font-size: 42px; }
+  .password-only-login .login-copy ul { display: grid; }
+  .password-only-login .login-footer { margin-top: 8px; }
+  .password-field input { min-height: 54px; }
+  .password-field button { width: 46px; height: 44px; }
+
+  .site-header { top: 0; }
+  .site-header-inner { min-height: 64px; gap: 10px; }
+  .site-header .brand > span:last-child { display: grid; }
+  .site-header .brand strong { font-size: 14px; }
+  .site-header .brand small { display: none; }
+  .site-header .brand-mark { width: 38px; height: 38px; border-radius: 12px; }
+  .site-actions { gap: 6px; }
+  .credit-badge { max-width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .site-actions .icon-button { width: 42px; height: 42px; }
+
+  .mobile-nav {
+    position: fixed;
+    z-index: 80;
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    min-height: 64px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,.11);
+    border-radius: 22px;
+    padding: 7px;
+    background: rgba(16,17,15,.96);
+    color: white;
+    box-shadow: 0 18px 55px rgba(0,0,0,.3);
+    backdrop-filter: blur(18px);
+  }
+  .mobile-nav a { min-width: 0; min-height: 50px; display: grid; place-items: center; align-content: center; gap: 4px; border-radius: 16px; color: #d5d9cd; font-size: 10px; font-weight: 800; }
+  .mobile-nav a:active { background: rgba(217,255,66,.14); color: var(--lime); }
+  .mobile-nav span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
+  .content-page { width: calc(100% - 24px); padding: 26px 0 calc(var(--mobile-nav-height) + 42px + env(safe-area-inset-bottom)); }
+  .page-hero { gap: 12px; }
+  .page-hero > div:first-child { padding: 25px 22px; border-radius: 24px; }
+  .page-hero h1, .page-title h1, .credits-hero h1 { font-size: 40px; }
+  .page-hero p, .page-title p, .credits-hero p { font-size: 14px; }
+  .hero-credit-card { min-height: 118px; padding: 20px; border-radius: 22px; }
+  .hero-credit-card strong { font-size: 52px; }
+
+  .library-toolbar { position: sticky; z-index: 20; top: 65px; margin: 16px -12px 18px; padding: 10px 12px 12px; background: rgba(245,242,232,.94); backdrop-filter: blur(15px); }
+  .search-box { width: 100%; min-height: 48px; }
+  .category-tabs { width: calc(100vw - 24px); margin-right: -12px; padding-right: 12px; scrollbar-width: none; }
+  .category-tabs::-webkit-scrollbar { display: none; }
+  .category-tabs button { min-height: 44px; flex: 0 0 auto; }
+
+  .poster-card { border-radius: 22px; }
+  .poster-card-body { padding: 16px; }
+  .poster-card-footer { align-items: stretch; flex-direction: column; }
+  .poster-card-footer .button { width: 100%; min-height: 46px; }
+  .poster-overlay { opacity: 1; align-content: end; justify-content: start; padding: 18px; background: linear-gradient(transparent 55%, rgba(16,17,15,.74)); }
+
+  .modal-backdrop { padding: 0; align-items: stretch; }
+  .preview-modal { width: 100%; max-height: 100svh; min-height: 100svh; border-radius: 0; grid-template-rows: minmax(280px, 46svh) 1fr; overflow: auto; }
+  .preview-stage { min-height: 0; aspect-ratio: auto; }
+  .preview-details { padding: 25px 20px calc(30px + env(safe-area-inset-bottom)); align-content: start; }
+  .preview-details h2 { font-size: 32px; }
+  .preview-details .button { position: sticky; bottom: 0; min-height: 52px; }
+  .modal-close { top: max(12px, env(safe-area-inset-top)); right: 12px; width: 46px; height: 46px; }
+
+  .download-list { gap: 14px; }
+  .download-row { grid-template-columns: 78px 1fr; padding: 12px; gap: 13px; }
+  .download-row img { width: 78px; height: 78px; }
+  .download-row .button { grid-column: 1 / -1; min-height: 48px; width: 100%; }
+
+  .credits-hero { display: grid; grid-template-columns: 1fr auto; gap: 16px; }
+  .balance-orb { width: 112px; height: 112px; }
+  .balance-orb strong { font-size: 40px; }
+  .package-card { min-height: 0; padding: 22px; }
+  .package-card > strong { font-size: 62px; }
+  .package-card .button { min-height: 50px; }
+  .payment-trust { align-items: flex-start; }
+
+  .admin-main { padding-bottom: calc(var(--mobile-nav-height) + 32px + env(safe-area-inset-bottom)); }
+  .admin-sidebar { scrollbar-width: none; }
+  .admin-sidebar::-webkit-scrollbar { display: none; }
+  .admin-header .button { width: 100%; min-height: 48px; }
+  .metric-grid article { min-height: 132px; }
+  .table-wrap { margin-left: -12px; margin-right: -12px; border-radius: 0; }
+  th, td { padding: 13px 12px; }
+  .inline-credit-form { grid-template-columns: 72px minmax(130px, 1fr) 44px; }
+  .file-drop { min-height: 160px; }
+  .form-actions { position: sticky; bottom: calc(var(--mobile-nav-height) + 12px); z-index: 15; padding: 10px; border-radius: 18px; background: rgba(245,242,232,.95); backdrop-filter: blur(14px); }
+
+  .status-card { padding: 32px 22px; border-radius: 24px; }
+  .status-card h1 { font-size: 34px; }
+}
+
+@media (max-width: 380px) {
+  .site-header .brand > span:last-child { display: none; }
+  .credit-badge { padding-inline: 9px; }
+  .mobile-nav a { font-size: 9px; }
+  .page-hero h1, .page-title h1, .credits-hero h1 { font-size: 35px; }
+}

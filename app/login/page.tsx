@@ -1,13 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { ArrowRight, CheckCircle2, Eye, EyeOff, Images, LockKeyhole, WalletCards } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Images, LockKeyhole, WalletCards } from "lucide-react";
 import { Brand } from "@/components/Brand";
 import { createClient } from "@/lib/supabase/client";
+import { JB_LOGIN_EMAIL } from "@/lib/portal";
 
 export default function LoginPage() {
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
@@ -15,42 +14,67 @@ export default function LoginPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    setBusy(true); setMessage("");
+    if (busy) return;
+    setBusy(true);
+    setMessage("");
+
     const supabase = createClient();
-    const result = mode === "login"
-      ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${location.origin}/auth/callback` } });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: JB_LOGIN_EMAIL,
+      password
+    });
+
     setBusy(false);
-    if (result.error) return setMessage(result.error.message);
-    if (mode === "signup" && !result.data.session) return setMessage("Check your email to confirm your account. Your 10 welcome credits will be ready after confirmation.");
+    if (error) {
+      setMessage("Incorrect password. Check it and try again.");
+      return;
+    }
     location.href = "/library";
   }
 
-  return <main className="login-page">
+  return <main className="login-page password-only-login">
     <section className="login-brand-panel">
       <Brand />
       <div className="login-copy">
-        <span className="pill">Private client portal</span>
-        <h1>Your JBCutz posters, ready when you are.</h1>
-        <p>Preview every design, unlock the posters you need, and redownload them anytime.</p>
+        <span className="pill">Private JBCutz portal</span>
+        <h1>Your posters, ready when you are.</h1>
+        <p>Preview every design, unlock the posters you need, and download them again at any time.</p>
         <ul>
-          <li><Images size={18} /><span><strong>Preview before you spend</strong><small>Browse every poster at no charge.</small></span></li>
-          <li><WalletCards size={18} /><span><strong>10 welcome credits</strong><small>One credit unlocks one poster permanently.</small></span></li>
-          <li><LockKeyhole size={18} /><span><strong>Secure downloads</strong><small>Original files stay private until unlocked.</small></span></li>
+          <li><Images size={18} /><span><strong>Preview first</strong><small>Browse every design before using a credit.</small></span></li>
+          <li><WalletCards size={18} /><span><strong>10 free credits</strong><small>One credit permanently unlocks one poster.</small></span></li>
+          <li><LockKeyhole size={18} /><span><strong>Private access</strong><small>Only the JBCutz password opens this library.</small></span></li>
         </ul>
       </div>
-      <div className="login-footer">Designed for JBCutz • Lyric House, CBD</div>
+      <div className="login-footer">JBCutz • Lyric House, CBD</div>
     </section>
+
     <section className="login-form-panel">
       <form className="auth-card" onSubmit={submit}>
-        <span className="eyebrow">{mode === "login" ? "Welcome back" : "Create your account"}</span>
-        <h2>{mode === "login" ? "Sign in to PostCutz" : "Claim your 10 free credits"}</h2>
-        <p>{mode === "login" ? "Access your private poster library and downloads." : "Create your secure client account in a few seconds."}</p>
-        <label>Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required autoComplete="email" /></label>
-        <label>Password<div className="password-field"><input type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} required autoComplete={mode === "login" ? "current-password" : "new-password"} /><button type="button" onClick={() => setShowPassword((value) => !value)} aria-label="Toggle password visibility">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></label>
-        {message && <div className={`auth-message ${message.startsWith("Check") ? "success" : ""}`}>{message.startsWith("Check") && <CheckCircle2 size={17} />}{message}</div>}
-        <button className="button button-primary button-wide" disabled={busy}>{busy ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}<ArrowRight size={18} /></button>
-        <button type="button" className="text-button" onClick={() => { setMode(mode === "login" ? "signup" : "login"); setMessage(""); }}>{mode === "login" ? "New here? Create an account" : "Already have an account? Sign in"}</button>
+        <span className="eyebrow">JBCutz access</span>
+        <h2>Enter your password</h2>
+        <p>No email address or account creation is required.</p>
+        <label>Password
+          <div className="password-field">
+            <input
+              autoFocus
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              minLength={8}
+              required
+              autoComplete="current-password"
+              aria-describedby={message ? "login-error" : undefined}
+            />
+            <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+        </label>
+        {message && <div id="login-error" className="auth-message" role="alert">{message}</div>}
+        <button className="button button-primary button-wide login-submit" disabled={busy}>
+          {busy ? "Opening library…" : "Open poster library"}
+          <ArrowRight size={19} />
+        </button>
       </form>
     </section>
   </main>;

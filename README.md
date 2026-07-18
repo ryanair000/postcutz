@@ -28,4 +28,13 @@ Configure these values in Vercel without committing them:
 - `ADMIN_EMAILS`
 - `NEXT_PUBLIC_SITE_URL`
 
-The production URL is `https://postcutz.vercel.app`.
+The production URL is `https://postcutz-live.vercel.app`.
+
+`PAYSTACK_SECRET_KEY` must remain a test key until the owner explicitly approves live payments.
+Set `PAYSTACK_LIVE_ENABLED=true` only alongside that approval. The webhook endpoint is
+`https://postcutz-live.vercel.app/api/paystack/webhook`.
+
+The repository contains normal readable source and has no build-time archive extraction step.
+Admin poster uploads keep originals in the private `poster-originals` bucket and generate a
+compressed, watermarked WebP preview for the public `poster-previews` bucket. Originals must be
+at least 1080 by 1080 pixels and no larger than 4 MB.

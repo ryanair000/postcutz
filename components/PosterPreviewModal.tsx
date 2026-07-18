@@ -27,7 +27,7 @@ export function PosterPreviewModal({ poster, credits, busy, onClose, onAction }:
             <div><dt>Your balance</dt><dd>{credits} credits</dd></div>
           </dl>
           {!poster.unlocked && <p className="microcopy">One credit unlocks this poster permanently. Future downloads are free.</p>}
-          <button className="button button-primary button-wide" onClick={() => onAction(poster)} disabled={busy || (!poster.unlocked && !canAfford)}>
+          <button className="button button-primary button-wide" onClick={() => onAction(poster)} disabled={busy}>
             {poster.unlocked ? <Download size={18} /> : <Lock size={18} />}
             {busy ? "Preparing…" : poster.unlocked ? "Download poster" : canAfford ? `Unlock for ${poster.credit_cost} credit` : "Buy more credits"}
           </button>

@@ -31,7 +31,7 @@ export function CreditPackages({ packages, balance }: { packages: CreditPackage[
     {error && <div className="notice error">{error}</div>}
     <section className="package-grid">{packages.map((pkg, index) => <article className={`package-card ${index === 2 ? "recommended" : ""}`} key={pkg.id}>
       {index === 2 && <span className="package-ribbon">Most popular</span>}
-      <small>{pkg.name}</small><strong>{pkg.credits}</strong><span>credits</span><h3>{formatKes(pkg.amount_kes)}</h3><p>KSh 100 per poster unlock</p>
+      <small>{pkg.name}</small><strong>{pkg.credits}</strong><span>credits</span><h3>{formatKes(pkg.amount_kes)}</h3><p>{formatKes(pkg.amount_kes / pkg.credits)} per poster unlock</p>
       <ul><li><Check size={16} /> Credits never expire</li><li><Check size={16} /> Permanent poster access</li><li><Check size={16} /> Free redownloads</li></ul>
       <button className="button button-primary button-wide" onClick={() => checkout(pkg.id)} disabled={Boolean(busy)}>{busy === pkg.id ? <LoaderCircle className="spin" size={18} /> : <CreditCard size={18} />} {busy === pkg.id ? "Opening Paystack…" : "Buy credits"}</button>
     </article>)}</section>

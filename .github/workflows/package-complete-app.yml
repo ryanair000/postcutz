@@ -42,12 +42,15 @@ jobs:
           rm -rf .git .github .next node_modules bundles overrides
           rm -f scripts/apply-bundles.mjs
           rmdir scripts 2>/dev/null || true
-          find . -name '.env' -o -name '.env.local' -o -name '.env.production' | xargs -r rm -f
+          find . \( -name '.env' -o -name '.env.local' -o -name '.env.production' -o -name '.env.*.local' \) -type f -delete
 
-      - name: Create ZIP
+      - name: Create ZIP in temporary directory
+        shell: bash
         run: |
-          cd ..
-          mv postcutz postcutz-complete
+          rm -rf /tmp/postcutz-complete /tmp/postcutz-complete.zip
+          mkdir -p /tmp/postcutz-complete
+          rsync -a ./ /tmp/postcutz-complete/
+          cd /tmp
           zip -r postcutz-complete.zip postcutz-complete \
             -x '*/node_modules/*' '*/.next/*' '*/.git/*' '*/.vercel/*' '*/.env' '*/.env.local' '*/.env.*.local'
 
@@ -55,6 +58,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: postcutz-complete-app
-          path: ../postcutz-complete.zip
+          path: /tmp/postcutz-complete.zip
           if-no-files-found: error
           retention-days: 1

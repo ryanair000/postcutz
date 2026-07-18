@@ -17,42 +17,13 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install --ignore-scripts --no-audit --no-fund
-
-      - name: Expand production bundles
-        run: npm run apply-bundles
-
-      - name: Prepare clean distributable source
+      - name: Create clean repository ZIP
         shell: bash
         run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          delete packageJson.scripts['apply-bundles'];
-          delete packageJson.scripts['predev'];
-          delete packageJson.scripts['prebuild'];
-          fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
-          NODE
-          rm -rf .git .github .next node_modules bundles overrides
-          rm -f scripts/apply-bundles.mjs
-          rmdir scripts 2>/dev/null || true
-          find . \( -name '.env' -o -name '.env.local' -o -name '.env.production' -o -name '.env.*.local' \) -type f -delete
-
-      - name: Create ZIP in temporary directory
-        shell: bash
-        run: |
-          rm -rf /tmp/postcutz-complete /tmp/postcutz-complete.zip
-          mkdir -p /tmp/postcutz-complete
-          rsync -a ./ /tmp/postcutz-complete/
-          cd /tmp
-          zip -r postcutz-complete.zip postcutz-complete \
-            -x '*/node_modules/*' '*/.next/*' '*/.git/*' '*/.vercel/*' '*/.env' '*/.env.local' '*/.env.*.local'
+          rm -f /tmp/postcutz-complete.zip
+          zip -r /tmp/postcutz-complete.zip . \
+            -x '.git/*' '.github/*' 'node_modules/*' '.next/*' '.vercel/*' \
+               '.env' '.env.local' '.env.production' '.env.*.local' '*.log'
 
       - name: Upload complete app ZIP
         uses: actions/upload-artifact@v4

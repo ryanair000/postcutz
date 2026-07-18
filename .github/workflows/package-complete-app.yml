@@ -1,34 +1,37 @@
 name: Package complete PostCutz app
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   package:
+    if: github.event.pull_request.head.ref == 'agent/run-package-workflow'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Create clean repository ZIP
+      - name: Build and commit complete ZIP
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
-          rm -f /tmp/postcutz-complete.zip
+          set -euo pipefail
+          git clone --depth 1 --branch "$HEAD_BRANCH" "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" source
+          cd source
+          if [ -f postcutz-complete.zip ]; then
+            echo "ZIP already exists; nothing to do."
+            exit 0
+          fi
           zip -r /tmp/postcutz-complete.zip . \
             -x '.git/*' '.github/*' 'node_modules/*' '.next/*' '.vercel/*' \
-               '.env' '.env.local' '.env.production' '.env.*.local' '*.log'
-
-      - name: Upload complete app ZIP
-        uses: actions/upload-artifact@v4
-        with:
-          name: postcutz-complete-app
-          path: /tmp/postcutz-complete.zip
-          if-no-files-found: error
-          retention-days: 1
+               '.env' '.env.local' '.env.production' '.env.*.local' '*.log' '.package-request'
+          cp /tmp/postcutz-complete.zip ./postcutz-complete.zip
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f postcutz-complete.zip
+          git commit -m 'Add generated complete app ZIP [skip ci]'
+          git push origin "HEAD:${HEAD_BRANCH}"

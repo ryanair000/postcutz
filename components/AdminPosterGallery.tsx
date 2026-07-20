@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Archive, Edit3, ExternalLink, Search } from "lucide-react";
+import { useToast } from "@/components/ToastProvider";
 
 type AdminPosterItem = {
   id: string;
@@ -15,12 +16,16 @@ type AdminPosterItem = {
 };
 
 export function AdminPosterGallery({ posters }: { posters: AdminPosterItem[] }) {
+  const { toast } = useToast();
   const [items, setItems] = useState(posters);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [category, setCategory] = useState("all");
   const [busy, setBusy] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setItems(posters);
+  }, [posters]);
 
   const categories = useMemo(() => Array.from(new Set(items.map((item) => item.category))).sort(), [items]);
   const filtered = useMemo(() => items.filter((item) => {
@@ -31,22 +36,23 @@ export function AdminPosterGallery({ posters }: { posters: AdminPosterItem[] }) 
   }), [items, query, status, category]);
 
   async function archive(poster: AdminPosterItem) {
-    if (!confirm(`Archive ${poster.title}? Existing unlocks will keep access.`)) return;
+    if (!window.confirm(`Archive ${poster.title}? Existing unlocks will keep access.`)) return;
     setBusy(poster.id);
-    setMessage("");
-    const response = await fetch(`/api/admin/posters/${poster.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "archived" })
-    });
-    const payload = await response.json();
-    if (response.ok) {
+    try {
+      const response = await fetch(`/api/admin/posters/${poster.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "archived" })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Could not archive the poster.");
       setItems((current) => current.map((item) => item.id === poster.id ? { ...item, status: "archived" } : item));
-      setMessage(`${poster.title} was archived.`);
-    } else {
-      setMessage(payload.error || "Could not archive the poster.");
+      toast({ title: "Poster archived", description: `${poster.title} is hidden from new unlocks.`, variant: "success" });
+    } catch (error) {
+      toast({ title: "Archive failed", description: error instanceof Error ? error.message : "Could not archive the poster.", variant: "error" });
+    } finally {
+      setBusy(null);
     }
-    setBusy(null);
   }
 
   return <section className="admin-panel recent-posters-panel">
@@ -61,15 +67,14 @@ export function AdminPosterGallery({ posters }: { posters: AdminPosterItem[] }) 
       <select value={category} onChange={(event) => setCategory(event.target.value)} aria-label="Filter by category"><option value="all">All categories</option>{categories.map((item) => <option key={item} value={item}>{item}</option>)}</select>
     </div>
 
-    {message && <div className="notice success">{message}</div>}
     {filtered.length ? <div className="admin-poster-grid">{filtered.map((poster) => <article className="admin-poster-card" key={poster.id}>
       <div className="admin-poster-image"><img src={poster.preview_url} alt={poster.title} /><span className={`status-badge ${poster.status}`}>{poster.status}</span></div>
       <div className="admin-poster-card-body">
         <div><small>{poster.category}</small><h3>{poster.title}</h3><p>{poster.credit_cost} credit{poster.credit_cost === 1 ? "" : "s"}</p></div>
         <div className="admin-poster-actions">
-          <a className="icon-button" href={poster.preview_url} target="_blank" rel="noreferrer" title="Open preview"><ExternalLink size={16} /></a>
-          <Link className="icon-button" href={`/admin/posters/${poster.id}`} title="Edit poster"><Edit3 size={16} /></Link>
-          {poster.status !== "archived" && <button className="icon-button archive-action" disabled={busy === poster.id} onClick={() => void archive(poster)} title="Archive poster"><Archive size={16} /></button>}
+          <a className="icon-button" href={poster.preview_url} target="_blank" rel="noreferrer" aria-label={`Open ${poster.title} preview`}><ExternalLink size={16} /></a>
+          <Link className="icon-button" href={`/admin/posters/${poster.id}`} aria-label={`Edit ${poster.title}`}><Edit3 size={16} /></Link>
+          {poster.status !== "archived" && <button type="button" className="icon-button archive-action" disabled={busy === poster.id} onClick={() => void archive(poster)} aria-label={`Archive ${poster.title}`}><Archive size={16} /></button>}
         </div>
       </div>
     </article>)}</div> : <div className="admin-gallery-empty">No posters match these filters.</div>}

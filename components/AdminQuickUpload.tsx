@@ -15,6 +15,7 @@ import {
   Upload,
   X
 } from "lucide-react";
+import { useToast } from "@/components/ToastProvider";
 
 type FileInfo = {
   name: string;
@@ -69,6 +70,7 @@ function wait(ms: number) {
 
 export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
+  const { toast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
@@ -92,16 +94,23 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
     fileInfo.height >= 1080
   ), [fileInfo]);
 
+  function reportError(description: string) {
+    setMessage(description);
+    toast({ title: "Check the poster", description, variant: "error" });
+  }
+
   async function inspect(nextFile?: File) {
     if (!nextFile) return;
     setMessage("");
     setUploaded(null);
     if (!allowedTypes.has(nextFile.type)) {
-      setMessage("Use a JPG, PNG or WebP image.");
+      clearFile();
+      reportError("Use a JPG, PNG or WebP image.");
       return;
     }
     if (nextFile.size > 4_000_000) {
-      setMessage("The image must be smaller than 4 MB.");
+      clearFile();
+      reportError("The image must be smaller than 4 MB.");
       return;
     }
     try {
@@ -120,10 +129,11 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
         setTitle(nextFile.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()));
       }
       if (dimensions.width < 1080 || dimensions.height < 1080) {
-        setMessage("The original must be at least 1080 × 1080 pixels.");
+        reportError("The original must be at least 1080 × 1080 pixels.");
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not inspect this image.");
+      const description = error instanceof Error ? error.message : "Could not inspect this image.";
+      reportError(description);
     }
   }
 
@@ -146,12 +156,10 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!file || !valid) {
-      setMessage("Choose a valid image before publishing.");
+      reportError("Choose a valid image before publishing.");
       return;
     }
 
-    // Capture the form payload before any await. React's event.currentTarget may be
-    // released after the first asynchronous pause, especially on mobile browsers.
     const form = new FormData(event.currentTarget);
     form.set("original", file);
 
@@ -176,10 +184,17 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       await wait(220);
       setUploaded(payload.poster);
       setMessage("Poster published successfully.");
+      toast({
+        title: payload.poster.status === "published" ? "Poster published" : "Draft saved",
+        description: `${payload.poster.title} is ready in PostCutz.`,
+        variant: "success"
+      });
       router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Upload failed.");
+      const description = error instanceof Error ? error.message : "Upload failed.";
+      setMessage(description);
       setProgress(-1);
+      toast({ title: "Upload failed", description, variant: "error" });
     } finally {
       setBusy(false);
     }
@@ -190,12 +205,12 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       <div>
         <span className="eyebrow">Quick upload</span>
         <h2>Add a poster to PostCutz</h2>
-        <p>Drop one original image. The server creates a watermarked preview and keeps the original private.</p>
+        <p>Drop one original image. The server creates a strongly watermarked preview and keeps the original private.</p>
       </div>
       <span className="secure-chip"><Check size={14} /> Private original</span>
     </div>
 
-    {uploaded ? <div className="upload-success-card">
+    {uploaded ? <div className="upload-success-card" role="status">
       <div className="upload-success-icon"><Check /></div>
       <div>
         <span className="eyebrow">Complete</span>
@@ -208,7 +223,7 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
         <Link className="button button-secondary" href={`/admin/posters/${uploaded.id}`}>Edit poster</Link>
         <button className="button button-secondary" type="button" onClick={reset}><RefreshCw size={17} /> Upload another</button>
       </div>
-    </div> : <form className="quick-upload-form" onSubmit={submit}>
+    </div> : <form className="quick-upload-form" onSubmit={submit} aria-busy={busy}>
       <div className="quick-upload-workspace">
         <div
           className={`quick-drop-zone ${dragging ? "dragging" : ""} ${file ? "has-file" : ""}`}
@@ -240,9 +255,10 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
             {previewUrl ? <>
               <img src={previewUrl} alt="Simulated watermarked preview" />
               <div className="watermark-pattern" aria-hidden="true">
-                {Array.from({ length: 9 }, (_, index) => <span key={index}>POSTCUTZ PREVIEW</span>)}
+                {Array.from({ length: 15 }, (_, index) => <span key={index}>POSTCUTZ PREVIEW</span>)}
               </div>
-              <div className="watermark-footer">Preview · Unlock to download</div>
+              <div className="watermark-preview-center">POSTCUTZ PREVIEW</div>
+              <div className="watermark-footer">Preview only · Unlock to download</div>
             </> : <div className="preview-placeholder"><FileImage /><span>Your preview appears here</span></div>}
           </div>
           <small>The final WebP preview is generated securely on the server.</small>
@@ -250,8 +266,8 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       </div>
 
       <div className="quick-upload-fields">
-        <label>Poster title<input name="title" value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Precision Fade" /></label>
-        <button className="button button-primary quick-publish-button" disabled={busy || !valid || title.trim().length < 2}>
+        <label>Poster title<input name="title" value={title} onChange={(event) => setTitle(event.target.value)} required placeholder="Precision Fade" autoComplete="off" /></label>
+        <button type="submit" className="button button-primary quick-publish-button" disabled={busy || !valid || title.trim().length < 2}>
           {busy ? <LoaderCircle className="spin" size={18} /> : <Upload size={18} />}
           {busy ? "Publishing…" : "Publish poster"}
         </button>
@@ -261,7 +277,7 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
         <summary><span><ChevronDown size={17} /> Advanced options</span><small>Category, description, credits and status</small></summary>
         <div className="form-grid advanced-grid">
           <label>Category<select name="category" defaultValue="General"><option>General</option><option>Haircuts</option><option>Offers</option><option>Opening Hours</option><option>Massage</option><option>Brand</option><option>Colour</option><option>Creative</option></select></label>
-          <label>Credit cost<input name="credit_cost" type="number" min="1" max="20" defaultValue="1" required /></label>
+          <label>Credit cost<input name="credit_cost" type="number" min="1" max="20" defaultValue="1" required inputMode="numeric" /></label>
           <label>Status<select name="status" defaultValue="published"><option value="published">Published</option><option value="draft">Draft</option></select></label>
           <label className="feature-toggle"><input name="featured" value="true" type="checkbox" /><span>Feature this poster</span></label>
           <label className="wide">Description<textarea name="description" placeholder="Optional short description shown to JB." /></label>
@@ -269,7 +285,7 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       </details>
 
       {busy && <div className="upload-progress-list" aria-live="polite">{stages.map((stage, index) => <div className={index < progress ? "done" : index === progress ? "active" : ""} key={stage}>{index < progress ? <Check size={15} /> : index === progress ? <LoaderCircle className="spin" size={15} /> : <Circle size={15} />}<span>{stage}</span></div>)}</div>}
-      {message && <div className={`notice ${uploaded ? "success" : "error"}`}>{message}</div>}
+      {message && !uploaded && <div className="notice error" role="alert">{message}</div>}
     </form>}
   </section>;
 }

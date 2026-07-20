@@ -150,6 +150,11 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       return;
     }
 
+    // Capture the form payload before any await. React's event.currentTarget may be
+    // released after the first asynchronous pause, especially on mobile browsers.
+    const form = new FormData(event.currentTarget);
+    form.set("original", file);
+
     setBusy(true);
     setUploaded(null);
     setMessage("");
@@ -163,8 +168,6 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       await wait(160);
       setProgress(3);
 
-      const form = new FormData(event.currentTarget);
-      form.set("original", file);
       const response = await fetch("/api/admin/posters", { method: "POST", body: form });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Upload failed.");

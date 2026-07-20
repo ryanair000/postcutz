@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { randomUUID } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import { basename, dirname, extname, isAbsolute, relative, resolve } from "node:path";
 import process from "node:process";
@@ -170,7 +171,7 @@ async function preparePoster(entry, defaults, manifestDirectory, index) {
 }
 
 function makeVersion() {
-  return `${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
+  return `${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
 }
 
 function isStoragePath(value) {

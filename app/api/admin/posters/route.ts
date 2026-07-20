@@ -34,38 +34,38 @@ async function createWatermarkedPreview(input: Buffer) {
 
   const width = resized.info.width;
   const height = resized.info.height;
-  const fontSize = Math.max(30, Math.round(width / 19));
-  const rows = [0.04, 0.24, 0.44, 0.64, 0.84, 1.04];
-  const columns = [0.04, 0.5, 0.96];
+  const fontSize = Math.max(28, Math.round(width / 22));
+  const rows = [0.1, 0.38, 0.66, 0.94];
+  const columns = [0.08, 0.5, 0.92];
   const repeatedMarks = rows.flatMap((row) => columns.map((column) =>
     `<text x="${Math.round(width * column)}" y="${Math.round(height * row)}" text-anchor="middle" dominant-baseline="middle">POSTCUTZ PREVIEW</text>`
   )).join("");
-  const centerFontSize = Math.max(30, Math.round(width / 24));
-  const footerHeight = Math.max(64, Math.round(height * 0.075));
+  const centerFontSize = Math.max(28, Math.round(width / 30));
+  const footerHeight = Math.max(58, Math.round(height * 0.065));
 
   const watermark = Buffer.from(`
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <g fill="rgba(255,255,255,0.50)" stroke="rgba(0,0,0,0.75)" stroke-width="2.4"
+      <g fill="rgba(255,255,255,0.30)" stroke="rgba(0,0,0,0.52)" stroke-width="1.8"
         paint-order="stroke" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="900"
         transform="rotate(-28 ${width / 2} ${height / 2})">
         ${repeatedMarks}
       </g>
-      <rect x="${Math.round(width * 0.17)}" y="${Math.round(height * 0.44)}"
-        width="${Math.round(width * 0.66)}" height="${Math.round(height * 0.12)}"
-        rx="${Math.max(14, Math.round(height * 0.025))}" fill="rgba(16,17,15,0.80)"
-        stroke="rgba(255,255,255,0.72)" stroke-width="2"/>
+      <rect x="${Math.round(width * 0.21)}" y="${Math.round(height * 0.455)}"
+        width="${Math.round(width * 0.58)}" height="${Math.round(height * 0.09)}"
+        rx="${Math.max(12, Math.round(height * 0.02))}" fill="rgba(16,17,15,0.62)"
+        stroke="rgba(255,255,255,0.48)" stroke-width="1.4"/>
       <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
         fill="#ffffff" font-family="Arial, sans-serif" font-size="${centerFontSize}"
-        font-weight="900" letter-spacing="3">POSTCUTZ PREVIEW</text>
+        font-weight="900" letter-spacing="2.2">POSTCUTZ PREVIEW</text>
       <rect x="0" y="${Math.max(0, height - footerHeight)}" width="${width}" height="${footerHeight}"
-        fill="rgba(16,17,15,0.94)"/>
-      <text x="24" y="${height - Math.round(footerHeight * 0.36)}" fill="#ffffff"
-        font-family="Arial, sans-serif" font-size="20" font-weight="900" letter-spacing="1.4">
+        fill="rgba(16,17,15,0.88)"/>
+      <text x="24" y="${height - Math.round(footerHeight * 0.34)}" fill="#ffffff"
+        font-family="Arial, sans-serif" font-size="18" font-weight="900" letter-spacing="1.1">
         PREVIEW ONLY · UNLOCK TO DOWNLOAD
       </text>
-      <circle cx="${width - 40}" cy="${height - footerHeight / 2}" r="20" fill="#d9ff42"/>
-      <text x="${width - 40}" y="${height - footerHeight / 2 + 6}" text-anchor="middle"
-        fill="#10110f" font-family="Arial, sans-serif" font-size="16" font-weight="900">JB</text>
+      <circle cx="${width - 38}" cy="${height - footerHeight / 2}" r="18" fill="#d9ff42"/>
+      <text x="${width - 38}" y="${height - footerHeight / 2 + 5}" text-anchor="middle"
+        fill="#10110f" font-family="Arial, sans-serif" font-size="15" font-weight="900">JB</text>
     </svg>`);
 
   return sharp(resized.data)

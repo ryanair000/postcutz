@@ -1,6 +1,7 @@
 "use client";
 
 import { Download, Lock, X } from "lucide-react";
+import { PosterWatermark } from "@/components/PosterWatermark";
 import type { Poster } from "@/lib/types";
 
 export function PosterPreviewModal({ poster, credits, busy, onClose, onAction }: {
@@ -16,7 +17,10 @@ export function PosterPreviewModal({ poster, credits, busy, onClose, onAction }:
     <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label={poster.title} onMouseDown={onClose}>
       <div className="preview-modal" onMouseDown={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="Close preview"><X /></button>
-        <div className="preview-stage"><img src={poster.preview_url} alt={poster.title} /></div>
+        <div className="preview-stage">
+          <img src={poster.preview_url} alt={poster.title} />
+          <PosterWatermark />
+        </div>
         <div className="preview-details">
           <span className="eyebrow">{poster.category}</span>
           <h2>{poster.title}</h2>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Download, Eye, Lock } from "lucide-react";
+import { PosterWatermark } from "@/components/PosterWatermark";
 import type { Poster } from "@/lib/types";
 
 export function PosterCard({ poster, onPreview, onDownload }: {
@@ -12,6 +13,7 @@ export function PosterCard({ poster, onPreview, onDownload }: {
     <article className="poster-card">
       <button className="poster-image-button" onClick={() => onPreview(poster)} aria-label={`Preview ${poster.title}`}>
         <img src={poster.preview_url} alt={poster.title} className="poster-image" />
+        <PosterWatermark compact />
         <span className="poster-overlay"><Eye size={22} /> Preview</span>
         {poster.unlocked && <span className="poster-unlocked"><Check size={13} /> Unlocked</span>}
       </button>

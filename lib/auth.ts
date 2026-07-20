@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { JB_LOGIN_EMAIL } from "@/lib/portal";
 import { createClient } from "@/lib/supabase/server";
 
 export function getAdminEmails() {
@@ -9,7 +10,9 @@ export function getAdminEmails() {
 }
 
 export function emailIsAdmin(email?: string | null) {
-  return Boolean(email && getAdminEmails().includes(email.toLowerCase()));
+  const normalizedEmail = email?.trim().toLowerCase();
+  if (!normalizedEmail || normalizedEmail === JB_LOGIN_EMAIL.toLowerCase()) return false;
+  return getAdminEmails().includes(normalizedEmail);
 }
 
 export async function requireUser() {
@@ -20,7 +23,8 @@ export async function requireUser() {
 }
 
 export async function requireAdmin() {
-  const user = await requireUser();
-  if (!emailIsAdmin(user.email)) redirect("/library");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !emailIsAdmin(user.email)) redirect("/admin-login");
   return user;
 }

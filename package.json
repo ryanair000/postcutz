@@ -1,12 +1,14 @@
 {
   "name": "postcutz",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "posters:validate": "node scripts/ingest-posters.mjs",
+    "posters:ingest": "node scripts/ingest-posters.mjs --apply"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

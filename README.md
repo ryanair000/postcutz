@@ -4,11 +4,14 @@ Private JBCutz poster-credit portal.
 
 ## Production access
 
-The client uses a single password-only login. The hidden Supabase account is created by the deployment administrator and receives 10 welcome credits. Email registration is intentionally disabled in the user interface.
+The client uses a single password-only login at `/login`. The hidden Supabase client account is created by the deployment administrator and receives 10 welcome credits. Email registration is intentionally disabled in the user interface.
+
+Administrators sign in separately at `/admin-login` with an approved email in `ADMIN_EMAILS`. The fixed JBCutz client account is explicitly blocked from administrator authorization, and the client portal does not display admin navigation.
 
 ## Features
 
 - Password-only JBCutz login
+- Separate administrator login and protected admin routes
 - 10 welcome credits
 - Free watermarked previews
 - One-credit permanent poster unlocks

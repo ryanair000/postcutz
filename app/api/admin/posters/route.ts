@@ -34,27 +34,43 @@ async function createWatermarkedPreview(input: Buffer) {
 
   const width = resized.info.width;
   const height = resized.info.height;
-  const fontSize = Math.max(28, Math.round(width / 18));
-  const rows = [-height * 0.15, height * 0.12, height * 0.39, height * 0.66, height * 0.93, height * 1.2]
-    .map((y) => `<text x="50%" y="${Math.round(y)}" text-anchor="middle" dominant-baseline="middle">POSTCUTZ PREVIEW</text>`)
-    .join("");
+  const fontSize = Math.max(30, Math.round(width / 19));
+  const rows = [0.04, 0.24, 0.44, 0.64, 0.84, 1.04];
+  const columns = [0.04, 0.5, 0.96];
+  const repeatedMarks = rows.flatMap((row) => columns.map((column) =>
+    `<text x="${Math.round(width * column)}" y="${Math.round(height * row)}" text-anchor="middle" dominant-baseline="middle">POSTCUTZ PREVIEW</text>`
+  )).join("");
+  const centerFontSize = Math.max(30, Math.round(width / 24));
+  const footerHeight = Math.max(64, Math.round(height * 0.075));
 
   const watermark = Buffer.from(`
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <g fill="rgba(255,255,255,0.20)" stroke="rgba(0,0,0,0.16)" stroke-width="1"
-        font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="700"
+      <g fill="rgba(255,255,255,0.50)" stroke="rgba(0,0,0,0.75)" stroke-width="2.4"
+        paint-order="stroke" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="900"
         transform="rotate(-28 ${width / 2} ${height / 2})">
-        ${rows}
+        ${repeatedMarks}
       </g>
-      <rect x="0" y="${Math.max(0, height - 58)}" width="${width}" height="58" fill="rgba(16,17,15,0.82)"/>
-      <text x="24" y="${height - 22}" fill="rgba(255,255,255,0.92)" font-family="Arial, sans-serif" font-size="18" font-weight="700">POSTCUTZ PREVIEW · UNLOCK TO DOWNLOAD</text>
-      <circle cx="${width - 38}" cy="${height - 29}" r="18" fill="#d9ff42"/>
-      <text x="${width - 38}" y="${height - 23}" text-anchor="middle" fill="#10110f" font-family="Arial, sans-serif" font-size="15" font-weight="900">JB</text>
+      <rect x="${Math.round(width * 0.17)}" y="${Math.round(height * 0.44)}"
+        width="${Math.round(width * 0.66)}" height="${Math.round(height * 0.12)}"
+        rx="${Math.max(14, Math.round(height * 0.025))}" fill="rgba(16,17,15,0.80)"
+        stroke="rgba(255,255,255,0.72)" stroke-width="2"/>
+      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+        fill="#ffffff" font-family="Arial, sans-serif" font-size="${centerFontSize}"
+        font-weight="900" letter-spacing="3">POSTCUTZ PREVIEW</text>
+      <rect x="0" y="${Math.max(0, height - footerHeight)}" width="${width}" height="${footerHeight}"
+        fill="rgba(16,17,15,0.94)"/>
+      <text x="24" y="${height - Math.round(footerHeight * 0.36)}" fill="#ffffff"
+        font-family="Arial, sans-serif" font-size="20" font-weight="900" letter-spacing="1.4">
+        PREVIEW ONLY · UNLOCK TO DOWNLOAD
+      </text>
+      <circle cx="${width - 40}" cy="${height - footerHeight / 2}" r="20" fill="#d9ff42"/>
+      <text x="${width - 40}" y="${height - footerHeight / 2 + 6}" text-anchor="middle"
+        fill="#10110f" font-family="Arial, sans-serif" font-size="16" font-weight="900">JB</text>
     </svg>`);
 
   return sharp(resized.data)
     .composite([{ input: watermark }])
-    .webp({ quality: 78 })
+    .webp({ quality: 80 })
     .toBuffer();
 }
 

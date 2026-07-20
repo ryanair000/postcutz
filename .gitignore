@@ -7,3 +7,5 @@ out
 .vercel
 npm-debug.log*
 .DS_Store
+poster-batches/*
+!poster-batches/manifest.example.json

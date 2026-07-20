@@ -1,0 +1,27 @@
+{
+  "defaults": {
+    "category": "Haircuts",
+    "credit_cost": 1,
+    "status": "draft",
+    "featured": false
+  },
+  "posters": [
+    {
+      "file": "images/precision-fade.jpg",
+      "title": "Precision Fade",
+      "slug": "precision-fade",
+      "description": "Clean lines and a sharp finish.",
+      "status": "draft",
+      "featured": false
+    },
+    {
+      "file": "images/open-till-2am.png",
+      "title": "Open Till 2 AM",
+      "slug": "open-till-2am",
+      "category": "Opening Hours",
+      "description": "Late-night grooming at Lyric House, CBD.",
+      "credit_cost": 1,
+      "status": "draft"
+    }
+  ]
+}

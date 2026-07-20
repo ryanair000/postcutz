@@ -16,6 +16,7 @@ The client uses a single password-only login. The hidden Supabase account is cre
 - Paystack M-PESA/card credit purchases
 - Admin poster, client, credit and payment management
 - Responsive mobile bottom navigation and large touch targets
+- Reusable validated batch poster ingestion
 
 ## Environment
 
@@ -28,7 +29,7 @@ Configure these values in Vercel without committing them:
 - `ADMIN_EMAILS`
 - `NEXT_PUBLIC_SITE_URL`
 
-The production URL is `https://postcutz-live.vercel.app`.
+The production URLs are `https://postcutz-live.vercel.app` and `https://postcutz.jengasites.com`.
 
 `PAYSTACK_SECRET_KEY` must remain a test key until the owner explicitly approves live payments.
 Set `PAYSTACK_LIVE_ENABLED=true` only alongside that approval. The webhook endpoint is
@@ -38,3 +39,51 @@ The repository contains normal readable source and has no build-time archive ext
 Admin poster uploads keep originals in the private `poster-originals` bucket and generate a
 compressed, watermarked WebP preview for the public `poster-previews` bucket. Originals must be
 at least 1080 by 1080 pixels and no larger than 4 MB.
+
+## Add one poster
+
+Use the authenticated admin page:
+
+```text
+/admin/posters/new
+```
+
+Upload one JPG, PNG or WebP original. The server validates its dimensions and size, generates the watermarked preview, uploads the original privately, and creates the poster record.
+
+## Add a batch of posters
+
+The reusable playbook is:
+
+```text
+skills/postcutz-poster-ingestion/SKILL.md
+```
+
+Copy `poster-batches/manifest.example.json` into a temporary batch folder and place the images under that same folder. Batch media is ignored by Git.
+
+Validate before writing anything:
+
+```bash
+npm run posters:validate -- --manifest poster-batches/<batch-name>/manifest.json
+```
+
+Apply an approved batch using server-side Supabase credentials:
+
+```bash
+npm run posters:ingest -- --manifest poster-batches/<batch-name>/manifest.json
+```
+
+Existing slugs are protected. Replacement requires explicit confirmation and the `--replace` flag:
+
+```bash
+npm run posters:ingest -- --manifest poster-batches/<batch-name>/manifest.json --replace
+```
+
+The importer validates every image before uploading, creates a watermarked public preview, stores the original privately, inserts or updates `poster_portal_posters`, and cleans up superseded storage objects after a successful replacement.
+
+## Development checks
+
+```bash
+npm install
+npm run typecheck
+npm run build
+```

@@ -1,5 +1,5 @@
 export function PosterWatermark({ compact = false }: { compact?: boolean }) {
-  const marks = compact ? 15 : 24;
+  const marks = compact ? 8 : 12;
 
   return <div className={`poster-watermark ${compact ? "compact" : ""}`} aria-hidden="true">
     <div className="poster-watermark-pattern">

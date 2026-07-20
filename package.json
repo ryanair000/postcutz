@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node --check scripts/ingest-posters.mjs && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "posters:validate": "node scripts/ingest-posters.mjs",

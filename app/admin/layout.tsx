@@ -1,3 +1,4 @@
+import "../../styles/admin-dashboard.css";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { requireAdmin } from "@/lib/auth";
 

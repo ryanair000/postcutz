@@ -10,16 +10,16 @@
 .poster-image { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
 .poster-image-button:hover .poster-image { transform: scale(1.025); }
 .poster-watermark { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
-.poster-watermark-pattern { position: absolute; inset: -18%; display: grid; grid-template-columns: repeat(3, minmax(125px, 1fr)); align-content: space-around; gap: 18px; transform: rotate(-28deg); }
-.poster-watermark-pattern span { color: rgba(255,255,255,.50); font-size: clamp(16px, 2vw, 29px); font-weight: 900; letter-spacing: .045em; white-space: nowrap; -webkit-text-stroke: .8px rgba(0,0,0,.68); text-shadow: 0 1px 3px rgba(0,0,0,.98), 0 0 8px rgba(0,0,0,.55); }
-.poster-watermark.compact .poster-watermark-pattern { inset: -22%; gap: 12px; }
-.poster-watermark.compact .poster-watermark-pattern span { font-size: clamp(14px, 1.55vw, 23px); color: rgba(255,255,255,.56); -webkit-text-stroke: .7px rgba(0,0,0,.72); }
-.poster-watermark-center { position: absolute; z-index: 3; left: 50%; top: 50%; transform: translate(-50%,-50%) rotate(-8deg); padding: 10px 17px; border: 1px solid rgba(255,255,255,.64); border-radius: 999px; background: rgba(16,17,15,.78); color: #fff; box-shadow: 0 8px 28px rgba(0,0,0,.32); font-size: 15px; font-weight: 950; letter-spacing: .12em; white-space: nowrap; text-transform: uppercase; }
-.poster-watermark.compact .poster-watermark-center { padding: 7px 11px; font-size: 10px; letter-spacing: .09em; }
-.poster-watermark-footer { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; min-height: 50px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(16,17,15,.93); color: #fff; font-size: 11px; font-weight: 950; letter-spacing: .09em; text-transform: uppercase; backdrop-filter: blur(5px); }
-.poster-watermark-footer strong { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 11px; letter-spacing: 0; }
-.poster-watermark.compact .poster-watermark-footer { min-height: 42px; padding: 0 11px; font-size: 9px; }
-.poster-watermark.compact .poster-watermark-footer strong { width: 25px; height: 25px; font-size: 9px; }
+.poster-watermark-pattern { position: absolute; inset: -20%; display: grid; grid-template-columns: repeat(3, minmax(125px, 1fr)); align-content: space-around; gap: 24px; transform: rotate(-28deg); }
+.poster-watermark-pattern span { color: rgba(255,255,255,.32); font-size: clamp(15px, 1.8vw, 26px); font-weight: 900; letter-spacing: .04em; white-space: nowrap; -webkit-text-stroke: .5px rgba(0,0,0,.55); text-shadow: 0 1px 3px rgba(0,0,0,.72); }
+.poster-watermark.compact .poster-watermark-pattern { inset: -24%; gap: 18px; }
+.poster-watermark.compact .poster-watermark-pattern span { font-size: clamp(13px, 1.4vw, 20px); color: rgba(255,255,255,.36); -webkit-text-stroke: .45px rgba(0,0,0,.58); }
+.poster-watermark-center { position: absolute; z-index: 3; left: 50%; top: 50%; transform: translate(-50%,-50%) rotate(-8deg); padding: 8px 14px; border: 1px solid rgba(255,255,255,.42); border-radius: 999px; background: rgba(16,17,15,.58); color: rgba(255,255,255,.96); box-shadow: 0 6px 20px rgba(0,0,0,.22); font-size: 13px; font-weight: 900; letter-spacing: .10em; white-space: nowrap; text-transform: uppercase; }
+.poster-watermark.compact .poster-watermark-center { padding: 6px 10px; font-size: 9px; letter-spacing: .08em; }
+.poster-watermark-footer { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; min-height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(16,17,15,.86); color: rgba(255,255,255,.96); font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(4px); }
+.poster-watermark-footer strong { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 10px; letter-spacing: 0; }
+.poster-watermark.compact .poster-watermark-footer { min-height: 38px; padding: 0 10px; font-size: 8px; }
+.poster-watermark.compact .poster-watermark-footer strong { width: 24px; height: 24px; font-size: 9px; }
 .poster-overlay { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; gap: 8px; color: white; font-weight: 900; background: rgba(16,17,15,.55); opacity: 0; transition: opacity .2s ease; }
 .poster-image-button:hover .poster-overlay { opacity: 1; }
 .poster-unlocked { position: absolute; z-index: 5; top: 13px; right: 13px; display: inline-flex; align-items: center; gap: 5px; padding: 7px 9px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 10px; font-weight: 900; }

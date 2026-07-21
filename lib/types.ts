@@ -22,6 +22,11 @@ export type Poster = {
   unlocked?: boolean;
 };
 
+export type ClientPoster = Omit<Poster, "original_path"> & {
+  preview_url: string;
+  unlocked: boolean;
+};
+
 export type CreditPackage = {
   id: string;
   name: string;

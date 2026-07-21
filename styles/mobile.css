@@ -85,7 +85,7 @@
 
   .download-list { gap: 14px; }
   .download-row { grid-template-columns: 78px 1fr; padding: 12px; gap: 13px; }
-  .download-row img { width: 78px; height: 78px; }
+  .download-preview { width: 78px; height: 78px; }
   .download-row .button { grid-column: 1 / -1; min-height: 48px; width: 100%; }
 
   .credits-hero { display: grid; grid-template-columns: 1fr auto; gap: 16px; }

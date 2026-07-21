@@ -2,14 +2,14 @@
 
 import { Download, Lock, X } from "lucide-react";
 import { PosterWatermark } from "@/components/PosterWatermark";
-import type { Poster } from "@/lib/types";
+import type { ClientPoster } from "@/lib/types";
 
 export function PosterPreviewModal({ poster, credits, busy, onClose, onAction }: {
-  poster: Poster | null;
+  poster: ClientPoster | null;
   credits: number;
   busy: boolean;
   onClose: () => void;
-  onAction: (poster: Poster) => void;
+  onAction: (poster: ClientPoster) => void;
 }) {
   if (!poster) return null;
   const canAfford = credits >= poster.credit_cost;

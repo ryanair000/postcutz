@@ -9,9 +9,13 @@ export function getAdminEmails() {
     .filter(Boolean);
 }
 
+export function isJbClientEmail(email?: string | null) {
+  return email?.trim().toLowerCase() === JB_LOGIN_EMAIL.toLowerCase();
+}
+
 export function emailIsAdmin(email?: string | null) {
   const normalizedEmail = email?.trim().toLowerCase();
-  if (!normalizedEmail || normalizedEmail === JB_LOGIN_EMAIL.toLowerCase()) return false;
+  if (!normalizedEmail || isJbClientEmail(normalizedEmail)) return false;
   return getAdminEmails().includes(normalizedEmail);
 }
 
@@ -25,6 +29,7 @@ export async function requireUser() {
 export async function requireAdmin() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  if (isJbClientEmail(user?.email)) redirect("/library");
   if (!user || !emailIsAdmin(user.email)) redirect("/admin-login");
   return user;
 }

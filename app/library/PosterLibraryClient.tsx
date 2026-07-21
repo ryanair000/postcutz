@@ -7,14 +7,14 @@ import { PosterCard } from "@/components/PosterCard";
 import { PosterPreviewModal } from "@/components/PosterPreviewModal";
 import { EmptyState } from "@/components/EmptyState";
 import { POSTER_PRICE_PER_CREDIT_KES } from "@/lib/pricing";
-import type { Poster } from "@/lib/types";
+import type { ClientPoster } from "@/lib/types";
 
-export function PosterLibraryClient({ posters, initialCredits }: { posters: Poster[]; initialCredits: number }) {
+export function PosterLibraryClient({ posters, initialCredits }: { posters: ClientPoster[]; initialCredits: number }) {
   const [credits, setCredits] = useState(initialCredits);
   const [items, setItems] = useState(posters);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [selected, setSelected] = useState<Poster | null>(null);
+  const [selected, setSelected] = useState<ClientPoster | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -25,7 +25,7 @@ export function PosterLibraryClient({ posters, initialCredits }: { posters: Post
     return categoryMatches && queryMatches;
   }), [items, query, category]);
 
-  async function download(poster: Poster) {
+  async function download(poster: ClientPoster) {
     if (credits < poster.credit_cost) {
       location.href = "/credits?reason=insufficient";
       return;

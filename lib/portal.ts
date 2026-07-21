@@ -12,9 +12,20 @@ export const PORTAL = {
   originalBucket: "poster-originals"
 } as const;
 
+export const CLIENT_POSTER_COLUMNS = "id,title,slug,description,category,preview_path,source_type,file_name,mime_type,width,height,credit_cost,status,featured,created_at,published_at" as const;
+
 export function posterPreviewUrl(path: string) {
-  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("/")) return path;
+  const segments = path.trim().split("/");
+  const unsafePath = !path.trim()
+    || path.startsWith("/")
+    || path.includes("\\")
+    || path.includes("?")
+    || path.includes("#")
+    || /^[a-z][a-z0-9+.-]*:/i.test(path)
+    || segments.some((segment) => !segment || segment === "." || segment === "..");
+  if (unsafePath) return "/icon.png";
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!base) return "";
-  return `${base}/storage/v1/object/public/${PORTAL.previewBucket}/${path}`;
+  if (!base) return "/icon.png";
+  const encodedPath = segments.map(encodeURIComponent).join("/");
+  return `${base}/storage/v1/object/public/${PORTAL.previewBucket}/${encodedPath}`;
 }

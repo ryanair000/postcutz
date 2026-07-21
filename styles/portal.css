@@ -44,7 +44,8 @@
 .empty-state p { margin: 0; }
 .download-list { display: grid; gap: 12px; }
 .download-row { min-height: 120px; padding: 13px; display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 18px; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); }
-.download-row img { width: 92px; height: 92px; border-radius: 14px; object-fit: cover; }
+.download-preview { position: relative; isolation: isolate; width: 92px; height: 92px; overflow: hidden; border-radius: 14px; }
+.download-preview img { width: 100%; height: 100%; object-fit: cover; }
 .download-copy h3 { margin: 4px 0; }
 .download-copy p { margin: 0; color: var(--muted); font-size: 12px; }
 .credits-hero { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-bottom: 34px; }

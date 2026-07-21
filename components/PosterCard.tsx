@@ -3,12 +3,12 @@
 import { Check, Download, Eye, Lock } from "lucide-react";
 import { PosterWatermark } from "@/components/PosterWatermark";
 import { POSTER_PRICE_PER_CREDIT_KES } from "@/lib/pricing";
-import type { Poster } from "@/lib/types";
+import type { ClientPoster } from "@/lib/types";
 
 export function PosterCard({ poster, onPreview, onDownload }: {
-  poster: Poster;
-  onPreview: (poster: Poster) => void;
-  onDownload: (poster: Poster) => void;
+  poster: ClientPoster;
+  onPreview: (poster: ClientPoster) => void;
+  onDownload: (poster: ClientPoster) => void;
 }) {
   return (
     <article className="poster-card">

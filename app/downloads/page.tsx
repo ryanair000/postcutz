@@ -1,8 +1,9 @@
 import { Download } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { EmptyState } from "@/components/EmptyState";
+import { PosterWatermark } from "@/components/PosterWatermark";
 import { requireUser } from "@/lib/auth";
-import { PORTAL, posterPreviewUrl } from "@/lib/portal";
+import { CLIENT_POSTER_COLUMNS, PORTAL, posterPreviewUrl } from "@/lib/portal";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate } from "@/lib/utils";
@@ -20,7 +21,7 @@ export default async function DownloadsPage() {
   const posterIds = (unlocks || []).map((unlock) => unlock.poster_id);
   const admin = createAdminClient();
   const { data: posters } = posterIds.length
-    ? await admin.from(PORTAL.posters).select("*").in("id", posterIds)
+    ? await admin.from(PORTAL.posters).select(CLIENT_POSTER_COLUMNS).in("id", posterIds)
     : { data: [] };
   const postersById = new Map((posters || []).map((poster) => [poster.id, poster]));
 
@@ -32,7 +33,10 @@ export default async function DownloadsPage() {
         const poster = postersById.get(unlock.poster_id);
         if (!poster) return null;
         return <article className="download-row" key={unlock.id}>
-          <img src={posterPreviewUrl(poster.preview_path)} alt={poster.title} />
+          <div className="download-preview">
+            <img src={posterPreviewUrl(poster.preview_path)} alt={poster.title} />
+            <PosterWatermark compact />
+          </div>
           <div className="download-copy"><span className="eyebrow">{poster.category}</span><h3>{poster.title}</h3><p>Unlocked {formatDate(unlock.unlocked_at)} · {Number(unlock.downloads_count || 0)} download{Number(unlock.downloads_count || 0) === 1 ? "" : "s"}</p></div>
           <a className="button button-primary" href={`/api/posters/${poster.id}/download`}><Download size={17} /> Download again</a>
         </article>;

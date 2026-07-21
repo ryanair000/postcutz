@@ -44,13 +44,22 @@ async function prepare(id: string) {
 export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const result = await prepare((await params).id);
   if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
-  if ("url" in result && result.url) return NextResponse.json({ url: result.url, file_name: result.fileName });
+  if ("url" in result && result.url) {
+    return NextResponse.json(
+      { url: result.url, file_name: result.fileName },
+      { headers: { "Cache-Control": "private, no-store" } }
+    );
+  }
   return NextResponse.json({ error: "Could not prepare the secure download." }, { status: 500 });
 }
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const result = await prepare((await params).id);
   if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
-  if ("url" in result && result.url) return NextResponse.redirect(result.url);
+  if ("url" in result && result.url) {
+    const response = NextResponse.redirect(result.url);
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  }
   return NextResponse.json({ error: "Could not prepare the secure download." }, { status: 500 });
 }

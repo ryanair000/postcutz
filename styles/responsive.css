@@ -30,7 +30,7 @@
   .preview-stage { min-height: auto; aspect-ratio: 1; }
   .preview-details { padding: 25px; }
   .download-row { grid-template-columns: 74px 1fr; }
-  .download-row img { width: 74px; height: 74px; }
+  .download-preview { width: 74px; height: 74px; }
   .download-row form { grid-column: 1 / -1; }
   .download-row .button { width: 100%; }
   .credits-hero { align-items: flex-start; }

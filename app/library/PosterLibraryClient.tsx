@@ -6,6 +6,7 @@ import { Search, Sparkles, WalletCards } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { PosterPreviewModal } from "@/components/PosterPreviewModal";
 import { EmptyState } from "@/components/EmptyState";
+import { POSTER_PRICE_PER_CREDIT_KES } from "@/lib/pricing";
 import type { Poster } from "@/lib/types";
 
 export function PosterLibraryClient({ posters, initialCredits }: { posters: Poster[]; initialCredits: number }) {
@@ -84,7 +85,7 @@ export function PosterLibraryClient({ posters, initialCredits }: { posters: Post
 
     {credits <= 0 && <section className="notice warning zero-credit-banner">
       <WalletCards size={22} />
-      <div><strong>Your credits have run out.</strong><p>Top up from KSh 100 for one poster, or choose a discounted bundle.</p></div>
+      <div><strong>Your credits have run out.</strong><p>Top up from KSh {POSTER_PRICE_PER_CREDIT_KES} for one poster, or choose a discounted bundle.</p></div>
       <Link className="button button-primary" href="/credits?reason=insufficient">View packages</Link>
     </section>}
 

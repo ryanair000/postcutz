@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { initializePaystackTransaction } from "@/lib/paystack";
 import { PORTAL } from "@/lib/portal";
+import { currentPackageAmountKes } from "@/lib/pricing";
 
 const schema = z.object({ package_id: z.string().uuid() });
 
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
   if (!pkg) return NextResponse.json({ error: "Credit package was not found." }, { status: 404 });
 
   const reference = `PC-${Date.now()}-${crypto.randomBytes(5).toString("hex")}`;
-  const amountMinor = Number(pkg.amount_kes) * 100;
+  const amountMinor = currentPackageAmountKes(pkg.amount_kes) * 100;
   const { error: paymentError } = await admin.from(PORTAL.payments).insert({
     user_id: user.id,
     reference,

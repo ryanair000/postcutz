@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { requireUser } from "@/lib/auth";
 import { PORTAL } from "@/lib/portal";
+import { currentPackageAmountKes } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
 import { CreditPackages } from "./CreditPackages";
 
@@ -16,6 +17,12 @@ export default async function CreditsPage() {
   ]);
   return <div className="app-shell">
     <Navigation credits={Number(balance || 0)} email={user.email} />
-    <CreditPackages packages={packages || []} balance={Number(balance || 0)} />
+    <CreditPackages
+      packages={(packages || []).map((pkg) => ({
+        ...pkg,
+        amount_kes: currentPackageAmountKes(pkg.amount_kes)
+      }))}
+      balance={Number(balance || 0)}
+    />
   </div>;
 }

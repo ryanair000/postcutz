@@ -2,6 +2,7 @@
 
 import { Check, Download, Eye, Lock } from "lucide-react";
 import { PosterWatermark } from "@/components/PosterWatermark";
+import { POSTER_PRICE_PER_CREDIT_KES } from "@/lib/pricing";
 import type { Poster } from "@/lib/types";
 
 export function PosterCard({ poster, onPreview, onDownload }: {
@@ -23,7 +24,7 @@ export function PosterCard({ poster, onPreview, onDownload }: {
           <h3>{poster.title}</h3>
         </div>
         <div className="poster-card-footer">
-          <span>{poster.unlocked ? "Free redownload" : `${poster.credit_cost} credit · KSh ${poster.credit_cost * 100}`}</span>
+          <span>{poster.unlocked ? "Free redownload" : `${poster.credit_cost} credit · KSh ${poster.credit_cost * POSTER_PRICE_PER_CREDIT_KES}`}</span>
           <button className="button button-small" onClick={() => onDownload(poster)}>
             {poster.unlocked ? <Download size={15} /> : <Lock size={15} />}
             {poster.unlocked ? "Download" : "Unlock"}

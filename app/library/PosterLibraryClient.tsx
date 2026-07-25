@@ -26,19 +26,20 @@ export function PosterLibraryClient({ posters, initialCredits }: { posters: Clie
   }), [items, query, category]);
 
   async function download(poster: ClientPoster) {
-    if (credits < poster.credit_cost) {
-      location.href = "/credits?reason=insufficient";
-      return;
-    }
-
     setBusy(true);
     setMessage("");
     try {
       const unlockResponse = await fetch(`/api/posters/${poster.id}/unlock`, { method: "POST" });
       const unlockPayload = await unlockResponse.json();
+      if (unlockResponse.status === 402) {
+        location.href = "/credits?reason=insufficient";
+        return;
+      }
       if (!unlockResponse.ok) throw new Error(unlockPayload.error || "Could not unlock poster.");
       const nextBalance = Number(unlockPayload.balance ?? unlockPayload.credit_balance ?? credits - poster.credit_cost);
       setCredits(nextBalance);
+      setItems((current) => current.filter((item) => item.id !== poster.id));
+      setSelected(null);
 
       const response = await fetch(`/api/posters/${poster.id}/download`, { method: "POST" });
       if (!response.ok) {
@@ -67,11 +68,9 @@ export function PosterLibraryClient({ posters, initialCredits }: { posters: Clie
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
 
-      setItems((current) => current.filter((item) => item.id !== poster.id));
-      setSelected(null);
       setMessage("Poster unlocked and moved to My Downloads.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Something went wrong.");
+      setMessage(`${error instanceof Error ? error.message : "Something went wrong."} If the credit was already used, the poster is safe in My Downloads.`);
     } finally {
       setBusy(false);
     }

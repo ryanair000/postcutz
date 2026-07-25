@@ -7,9 +7,9 @@ import {
   Check,
   ChevronDown,
   Circle,
+  ClipboardPaste,
   ExternalLink,
   FileImage,
-  ImagePlus,
   LoaderCircle,
   RefreshCw,
   Upload,
@@ -42,6 +42,22 @@ const stages = [
 ];
 
 const allowedTypes = new Set(["image/png", "image/jpeg", "image/webp"]);
+
+function clipboardImage(data: DataTransfer | null) {
+  const item = Array.from(data?.items ?? []).find(
+    (candidate) => candidate.kind === "file" && candidate.type.startsWith("image/")
+  );
+  const image = item?.getAsFile();
+  if (!image) return null;
+
+  const extension = image.type === "image/jpeg"
+    ? "jpg"
+    : image.type.split("/")[1]?.replace("jpeg", "jpg") || "png";
+  return new File([image], `pasted-poster-${Date.now()}.${extension}`, {
+    type: image.type,
+    lastModified: Date.now()
+  });
+}
 
 function formatBytes(bytes: number) {
   if (bytes < 1_000_000) return `${Math.round(bytes / 1_000)} KB`;
@@ -86,6 +102,21 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
   }, [previewUrl]);
 
+  useEffect(() => {
+    if (busy || uploaded) return;
+
+    function handlePaste(event: ClipboardEvent) {
+      const nextFile = clipboardImage(event.clipboardData);
+      if (!nextFile) return;
+
+      event.preventDefault();
+      void inspect(nextFile, true);
+    }
+
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  });
+
   const valid = useMemo(() => Boolean(
     fileInfo &&
     allowedTypes.has(fileInfo.type) &&
@@ -99,7 +130,7 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
     toast({ title: "Check the poster", description, variant: "error" });
   }
 
-  async function inspect(nextFile?: File) {
+  async function inspect(nextFile?: File, pasted = false) {
     if (!nextFile) return;
     setMessage("");
     setUploaded(null);
@@ -130,6 +161,12 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
       }
       if (dimensions.width < 1080 || dimensions.height < 1080) {
         reportError("The original must be at least 1080 × 1080 pixels.");
+      } else if (pasted) {
+        toast({
+          title: "Image pasted",
+          description: "The clipboard image is ready to publish.",
+          variant: "success"
+        });
       }
     } catch (error) {
       const description = error instanceof Error ? error.message : "Could not inspect this image.";
@@ -241,9 +278,9 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
             <button className="clear-upload" type="button" onClick={clearFile} aria-label="Remove selected image"><X size={17} /></button>
             <div className="selected-file-meta"><FileImage size={17} /><span><strong>{fileInfo?.name}</strong><small>{fileInfo && `${formatBytes(fileInfo.size)} · ${fileInfo.width} × ${fileInfo.height}`}</small></span></div>
           </> : <>
-            <ImagePlus size={34} />
-            <strong>Drop the poster here</strong>
-            <span>or choose a JPG, PNG or WebP image</span>
+            <ClipboardPaste size={34} />
+            <strong>Drop or paste the poster here</strong>
+            <span>Press Ctrl+V (or Cmd+V), or choose a JPG, PNG or WebP image</span>
             <button className="button button-secondary" type="button" onClick={() => fileInput.current?.click()}>Choose image</button>
           </>}
           <input ref={fileInput} className="visually-hidden-file" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void inspect(event.target.files?.[0])} />

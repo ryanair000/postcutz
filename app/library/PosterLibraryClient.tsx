@@ -98,3 +98,4 @@ export function PosterLibraryClient({ posters, initialCredits }: { posters: Clie
     <PosterPreviewModal poster={selected} credits={credits} busy={busy} onClose={() => setSelected(null)} onAction={download} />
   </main>;
 }
+

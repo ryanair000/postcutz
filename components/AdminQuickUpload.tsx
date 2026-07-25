@@ -326,3 +326,4 @@ export function AdminQuickUpload({ compact = false }: { compact?: boolean }) {
     </form>}
   </section>;
 }
+
